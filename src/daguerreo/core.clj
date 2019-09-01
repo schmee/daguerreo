@@ -28,18 +28,19 @@
                       :opts :daguerreo.core/run-opts)))
 
 (defn run
-  "Runs a set of tasks and returns a \"job\", a derefferable that when dereffed returns the resulting map after the job has reached a terminal state.
+  "Runs a set of tasks and returns a \"job\", a derefferable that when dereffed returns the job context after the job has reached a terminal state.
 
-  The resulting map will always contain `:daguerreo.job/status` (see specs for the set of possible values of this key).
+  The job context will always contain `:daguerreo.job/status` (see specs for the set of possible values of this key).
 
   Validates the tasks before running them via `validate-tasks`.
 
   `opts` is a map that can contain the following keys:
-  - `:event-chan` - a core.async channel that will receive all the events sent from the scheduler. Will be closed when the job reaches a terminal state. NOTE: if this channel blocks, it will block the entire scheduler. Make sure that you are reading of the channel, or use a dropping/sliding buffer to handle back-pressure.
+
+  - `:event-chan` - a core.async channel that will receive all the events sent from the scheduler. Will be closed when the job reaches a terminal state. NOTE: if this channel blocks it will block the entire scheduler, preventing any tasks from running. Make sure that you are reading of the channel, or use a dropping/sliding buffer to handle back-pressure.
   - `:executor` - the `java.util.Executor` that is used to run tasks.
   - `:max-concurrency` - the maximum number of tasks that will run concurrently.
-  - `:max-retries`: the maximum number of times a tasks is restarted after a timeout or exception. This does not include the original attempt, so with N max retries a task will be run at most (N + 1) times. `:max-retries` can also be set on a task, which will override this value on a per-task basis.
-  - `:timeout` - the job timeout in milliseconds. After this time has passed, the job will be cancelled and the result available when dereffing."
+  - `:max-retries`: the maximum number of times a tasks is restarted after a timeout or exception. This does not include the original attempt, so with N max retries a task will be run at most (N + 1) times.
+  - `:timeout` - the job timeout in milliseconds. After this time has passed, the job will be realized immediately with a status of `:job.status/timed-out`."
   ([tasks]
    (engine/run tasks {}))
   ([tasks opts]
