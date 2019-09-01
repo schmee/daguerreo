@@ -2,6 +2,16 @@
 
 Daguerreo is a library to create workflows using tasks. It takes care of dependency resolution, parallellism, retries and timeouts and let's you focus on your business logic. It shares the basic structure of other task execution libraries such as [Airflow](https://airflow.apache.org/) or [Luigi](https://github.com/spotify/luigi), but unlike those it is meant to be embedded in your application rather than run as a standalone service.
 
+## Installation
+
+`[schmee/daguerreo "0.1.0"]`
+
+## Documentation
+
+- [API documentation](https://schmee.github.io/daguerreo/)
+
+- [Specs](https://github.com/schmee/daguerreo/blob/master/src/daguerreo/impl/specs.clj)
+
 ### Example
 
 Let's make a smoothie! We need to dice the fruit, pour in the coconut milk and water, blend it and put garnish on it. However, we can do without the garnish (if we for some reason fail to complete that task).
