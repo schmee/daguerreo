@@ -126,7 +126,7 @@
     (comment "exit loop")
 
     :else (do
-            (log/info "ERROR " event)
+            (println "ERROR " event)
             (swap! errors conj event)
             (a/close! error-chan)
             (a/close! ctx-check-chan)
@@ -143,7 +143,7 @@
     (state-transition-validator (create-tap ec-mult) error-chan)
     (state-consistency-validator (create-tap ec-mult) error-chan)
     (one-time-state-validator (create-tap ec-mult) error-chan)
-    (let [job (engine/run tasks {:event-chan (helpers/event-logger log/info-fn)})]
+    (let [job (engine/run tasks {:event-chan (helpers/event-logger)})]
       (error-collector errors error-chan ctx-check-chan job)
       {:job job
        :errors errors})))
