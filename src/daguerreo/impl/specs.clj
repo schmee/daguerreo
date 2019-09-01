@@ -1,4 +1,4 @@
-(ns daguerreo.impl.specs
+(ns ^:no-doc daguerreo.impl.specs
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.test.check.generators :as tcgen])

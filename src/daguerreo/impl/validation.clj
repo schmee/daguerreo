@@ -1,4 +1,4 @@
-(ns daguerreo.impl.validation
+(ns ^:no-doc daguerreo.impl.validation
   (:require [clojure.spec.alpha :as s]
             [expound.alpha :as expound]
             [loom.alg :as alg]

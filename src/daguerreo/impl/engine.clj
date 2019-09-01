@@ -1,4 +1,4 @@
-(ns daguerreo.impl.engine
+(ns ^:no-doc daguerreo.impl.engine
   (:require [better-cond.core :as b]
             [clojure.core.async :as a]
             [loom.graph :as graph]

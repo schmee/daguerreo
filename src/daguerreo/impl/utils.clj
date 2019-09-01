@@ -1,4 +1,4 @@
-(ns daguerreo.impl.utils
+(ns ^:no-doc daguerreo.impl.utils
   (:require [loom.graph :as graph]))
 
 (defn task->node [task]

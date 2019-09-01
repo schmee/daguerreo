@@ -1,4 +1,4 @@
-## Daguerreo
+# Daguerreo [![cljdoc badge](https://cljdoc.org/badge/schmee/daguerreo)](https://cljdoc.org/d/schmee/daguerreo/CURRENT)
 
 Daguerreo is a library to create workflows using tasks. It takes care of dependency resolution, parallellism, retries and timeouts and let's you focus on your business logic. It shares the basic structure of other task execution libraries such as [Airflow](https://airflow.apache.org/) or [Luigi](https://github.com/spotify/luigi), but unlike those it is meant to be embedded in your application rather than run as a standalone service.
 
@@ -8,11 +8,11 @@ Daguerreo is a library to create workflows using tasks. It takes care of depende
 
 ## Documentation
 
-- [API documentation](https://schmee.github.io/daguerreo/)
+- [API documentation](https://cljdoc.org/d/schmee/daguerreo/CURRENT/api/daguerreo)
 
 - [Specs](https://github.com/schmee/daguerreo/blob/master/src/daguerreo/impl/specs.clj)
 
-### Example
+## Example
 
 Let's make a smoothie! We need to dice the fruit, pour in the coconut milk and water, blend it and put garnish on it. However, we can do without the garnish (if we for some reason fail to complete that task).
 
@@ -106,7 +106,7 @@ Now, most of you are probably not making smoothies. Instead, imagine some compli
 
 This sort of structure is very common, and Daguerreo let's you solve problems like this quickly and efficiently.
 
-### Overview
+## Overview
 
  A **task** is a simple map with two mandatory keys: a `:name` that is used to refer to the task in various contexts, and `:fn`, which is a function that does the actual work. Importantly, you can also specify dependencies between tasks. If Task B depends on Task A, Daguerreo guarantees that the result of Task A will be ready before task be is scheduled.
 
@@ -116,7 +116,7 @@ The way to communicate results between tasks in Daguerreo is the **job context**
 
  Behind the scenes, Duagerreo creates a [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) that models the flow of information between tasks. Tasks are scheduled so that independent tasks are run in parallell whenever possible, and if a tasks throws an exception it will be automatically re-scheduled and tried again. The maximum number of running task and the maximum number of retries are both configurable per task and job.
 
-### Early termination: cancellation and timeouts
+## Early termination: cancellation and timeouts
 
 It is possible to specify a timeout both per-task and for the whole job:
 
@@ -134,7 +134,7 @@ When a task times out, it will be re-scheduled and eligible to be run again, sub
 
 It is also possible to manually cancel a job with `daguerreo.core/cancel`.
 
-#### Making tasks handle early termination
+### Making tasks handle early termination
 
 Since it is not possbile in general to forcibly preempt a running thread on the JVM, cancelltion in Daguerreo is *cooperative*, similar to other task schedulers such as [Kotlin coroutines](https://kotlinlang.org/docs/reference/coroutines/cancellation-and-timeouts.html) or [Python's Trio](https://trio.readthedocs.io/en/latest/reference-core.html#cancellation-and-timeouts). In most cases this doesn't require you to do anything, but in some cases you will need to give Daguerreo some help.
 
@@ -162,7 +162,7 @@ Since it is not possbile in general to forcibly preempt a running thread on the 
 
 This is where the second argument to the task function comes into play. `is-active?` is a function that returns a boolean indicating whether the task is supposed to be running. If you have long-running tasks that you want to cancel or timeout, make sure to call `is-active?` intermittently.
 
-### Listening to scheduler events
+## Listening to scheduler events
 
 The scheduler in Daguerreo is entirely message-driven. These events contain information about state transitions of tasks which is then acted on by various internal workers. By passing a channel in the `:event-chan` option to `run`, you can get access to these events as well! This can be used to build all sorts of functionality such as detailed logging and per-task metrics.
 
@@ -177,13 +177,13 @@ The channel will contain events of type `:daguerreo/event`, that will look somet
 
 For more details on what an event can contain, check out [the specs.](https://github.com/schmee/daguerreo/blob/master/src/daguerreo/impl/specs.clj)
 
-### Tasks options
+## Tasks options
 
 - `:timeout` - the task timeout in milliseconds. After this time has passed, the task will be cancelled and made eligible for scheduling.
 - `:max-retries` - the maximum number of times the tasks is restarted after a timeout or exception. This does not include the original attempt, so a task with _N_ max retries will be run _(N + 1)_ times.
 - `:continue-on-failure?` - when a task has failed `:max-retries` number of times, it is moved to the `failed` state. Normally, this causes the entire job to fail, but `:continue-on-failure?` is set to true the job will continue anyway. This can be useful for tasks that do logging, metrics or other things non-critical to the outcome of the job.
 
-### Inspiration
+## Inspiration
 
 - [Airflow](https://airflow.apache.org/)
 - [Luigi](https://github.com/spotify/luigi)
@@ -193,7 +193,7 @@ For more details on what an event can contain, check out [the specs.](https://gi
 - [Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#a-surprise-benefit-removing-go-statements-enables-new-features)
 - [Timeouts and cancellation for humans](https://vorpus.org/blog/timeouts-and-cancellation-for-humans/)
 
-### License
+## License
 
 Copyright © 2019 John Schmidt
 

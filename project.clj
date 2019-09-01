@@ -19,11 +19,6 @@
                                   [org.clojure/test.check "0.10.0"]
                                   [org.clojure/tools.namespace "0.2.11"]
                                   [org.clojure/tools.reader "1.3.2"]]
-                   :source-paths ["dev"]
-                   :plugins [[lein-codox "0.10.7"]]
-                   :codox {:metadata {:doc/format :markdown}
-                           :namespaces [#"^daguerreo\.(?!impl)"]
-                           :output-path "codox"
-                           :source-paths ["src"]}}
+                   :source-paths ["dev"]}
              :kaocha {:dependencies [[lambdaisland/kaocha "0.0-529"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
