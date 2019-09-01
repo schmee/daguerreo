@@ -36,5 +36,6 @@ repl-port
 out/
 build/
 
+codox/
 dev/
 todo.txt

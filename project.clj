@@ -10,12 +10,20 @@
   :repl-options {:init-ns dev
                  :init (do (require 'user :reload) (user/refresh))
                  :caught io.aviso.repl/pretty-pst}
-  :source-paths ["dev" "src" "test"]
-  :profiles {:dev {:dependencies [[com.rpl/specter "1.1.2"]
+  :source-paths ["src"]
+  :test-paths ["test"]
+  :profiles {:dev {:dependencies [[org.clojure/clojure "1.10.1"]
+                                  [com.rpl/specter "1.1.2"]
                                   [com.taoensso/timbre "4.10.0"]
                                   [nubank/matcher-combinators "1.2.0"]
                                   [org.clojure/test.check "0.10.0"]
                                   [org.clojure/tools.namespace "0.2.11"]
-                                  [org.clojure/tools.reader "1.3.2"]]}
+                                  [org.clojure/tools.reader "1.3.2"]]
+                   :source-paths ["dev"]
+                   :plugins [[lein-codox "0.10.7"]]
+                   :codox {:metadata {:doc/format :markdown}
+                           :namespaces [#"^daguerreo\.(?!impl)"]
+                           :output-path "codox"
+                           :source-paths ["src"]}}
              :kaocha {:dependencies [[lambdaisland/kaocha "0.0-529"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
