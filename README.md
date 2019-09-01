@@ -74,7 +74,7 @@ A task function must return a map, which will be merged into the job context. Ea
 
 We can make a simple modification to the `run` command to gain more insight into what Daguerreo is doing:
 
-```
+```clj
 user=> @(daguerreo.core/run tasks {:ctx ctx :timeout 3000 :event-chan (helpers/event-logger)})
 JOB > idle -> running
 :dice-banana > unscheduled -> ready
@@ -168,7 +168,7 @@ The scheduler in Daguerreo is entirely message-driven. These events contain info
 
 The channel will contain events of type `:daguerreo/event`, that will look something like this:
 
-```
+```clj
 {:daguerreo/event-type :task.event/state-transition
  :daguerreo.task/name ::some-task
  :daguerreo.task/old-state :task.state/running
