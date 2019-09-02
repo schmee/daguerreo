@@ -148,7 +148,7 @@
       {:job job
        :errors errors})))
 
-(def N-TASK-SETS 20)
+(def N-TASK-SETS 10)
 
 (def task-sizes {:small 10
                  :medium 50
