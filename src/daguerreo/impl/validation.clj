@@ -1,10 +1,8 @@
 (ns ^:no-doc daguerreo.impl.validation
   (:require [clojure.spec.alpha :as s]
             [expound.alpha :as expound]
-            [loom.alg :as alg]
-            [loom.graph :as graph]
 
-            [daguerreo.impl.utils :as utils]
+            [daguerreo.impl.graph :as graph]
             [daguerreo.impl.specs]))
 
 (defn valid-spec? [task]
@@ -15,11 +13,13 @@
        :error ::spec-validation-failure})))
 
 (defn contains-cycles? [tasks task-graph]
-  (when-not (some? (alg/topsort task-graph))
-    [{:error ::dependency-cycle}]))
+  (let [cycle (graph/find-cycle task-graph)]
+    (when (seq cycle)
+      [{:error ::dependency-cycle
+        :cycle cycle}])))
 
 (defn continue-on-failure-with-deps? [task task-graph]
-  (let [dependents (graph/successors task-graph (:name task))]
+  (let [dependents (graph/dependents task-graph (:name task))]
     (when (and (:continue-on-failure? task) (seq dependents))
       {:error ::continue-on-failure-with-dependent-tasks
        :name (:name task)
@@ -53,9 +53,12 @@
   (str "Task " (:name error) " - `continue-on-failure?` with dependent tasks\n"
        "Dependents: " (:dependents error)))
 
+(defmethod format-error ::dependency-cycle [error]
+  (apply str (into ["Cycle in task dependencies: "] (interpose " -> " (:cycle error)))))
+
 (defn validate-and-report
   ([tasks]
-   (validate-and-report tasks (utils/tasks->graph tasks)))
+   (validate-and-report tasks (graph/tasks->graph tasks)))
   ([tasks task-graph]
    (let [errors (validate-tasks tasks task-graph)]
      (when (seq errors)

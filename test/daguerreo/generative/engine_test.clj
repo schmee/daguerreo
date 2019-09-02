@@ -7,6 +7,7 @@
             [daguerreo.core :as d]
             [daguerreo.helpers :as helpers]
             [daguerreo.impl.engine :as engine]
+            [daguerreo.impl.graph :as graph]
             [clojure.test :refer :all]))
 
 (defn create-tap [mult]
@@ -140,6 +141,9 @@
         error-chan (a/chan 100)
         ec-mult (a/mult event-chan)
         errors (atom [])]
+    (let [path (seq (graph/find-cycle (graph/tasks->graph tasks)))]
+      (if (seq path)
+        (throw (ex-info "found cycle in tree!" {:tasks tasks :path path}))))
     (state-transition-validator (create-tap ec-mult) error-chan)
     (state-consistency-validator (create-tap ec-mult) error-chan)
     (one-time-state-validator (create-tap ec-mult) error-chan)

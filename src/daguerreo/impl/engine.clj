@@ -1,10 +1,9 @@
 (ns ^:no-doc daguerreo.impl.engine
   (:require [better-cond.core :as b]
             [clojure.core.async :as a]
-            [loom.graph :as graph]
 
-            [daguerreo.impl.validation :as v]
-            [daguerreo.impl.utils :as utils])
+            [daguerreo.impl.graph :as graph]
+            [daguerreo.impl.validation :as v])
   (:import [java.util.concurrent Executor Executors ExecutorService ThreadFactory]))
 
 (set! *warn-on-reflection* true)
@@ -369,13 +368,13 @@
   (into {}
     (for [task tasks :let [name (:name task)]]
       [name
-       (assoc task :dependents (or (graph/successors task-graph name) #{}))])))
+       (assoc task :dependents (or (graph/dependents task-graph name) #{}))])))
 
 (defn run
   ([tasks]
    (run tasks {}))
   ([tasks user-opts]
-   (let [task-graph (utils/tasks->graph tasks)]
+   (let [task-graph (graph/tasks->graph tasks)]
      (v/validate-and-report tasks task-graph)
      (let [opts (merge default-opts user-opts)
            event-out-chan (:event-chan opts)
