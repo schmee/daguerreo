@@ -138,7 +138,7 @@ It is also possible to manually cancel a job with `daguerreo.core/cancel`.
 
 Since it is not possbile in general to forcibly preempt a running thread on the JVM, cancelltion in Daguerreo is *cooperative*, similar to other task schedulers such as [Kotlin coroutines](https://kotlinlang.org/docs/reference/coroutines/cancellation-and-timeouts.html) or [Python's Trio](https://trio.readthedocs.io/en/latest/reference-core.html#cancellation-and-timeouts). In most cases this doesn't require you to do anything, but in some cases you will need to give Daguerreo some help.
 
-- **locking IO**: since Daguerreo cannot preempt a blocked thread, make sure you set the appropriate timeouts when you are doing blocking IO (such as network requests).
+- **Blocking IO**: since Daguerreo cannot preempt a blocked thread, make sure you set the appropriate timeouts when you are doing blocking IO (such as network requests).
 
 - **Long-running loops**: below is an example of a task that doesn't respond to early termination:
 
