@@ -4,7 +4,7 @@ Daguerreo is a library to create workflows using tasks. It takes care of depende
 
 ## Installation
 
-`[schmee/daguerreo "0.1.0"]`
+[![Current Version](https://clojars.org/schmee/daguerreo/latest-version.svg)](https://clojars.org/schmee/daguerreo)
 
 ## Documentation
 
