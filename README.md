@@ -1,4 +1,4 @@
-# Daguerreo [![cljdoc badge](https://cljdoc.org/badge/schmee/daguerreo)](https://cljdoc.org/d/schmee/daguerreo/CURRENT)
+# Daguerreo [![CircleCI](https://circleci.com/gh/schmee/daguerreo.svg?style=svg)](https://circleci.com/gh/schmee/daguerreo) [![cljdoc badge](https://cljdoc.org/badge/schmee/daguerreo)](https://cljdoc.org/d/schmee/daguerreo/CURRENT)
 
 Daguerreo is a library to create workflows using tasks. It takes care of dependency resolution, parallellism, retries and timeouts and let's you focus on your business logic. It shares the basic structure of other task execution libraries such as [Airflow](https://airflow.apache.org/) or [Luigi](https://github.com/spotify/luigi), but unlike those it is meant to be embedded in your application rather than run as a standalone service.
 
