@@ -62,18 +62,15 @@
   (and (unscheduled? task)
        (every? completed? (get-deps task-map-with-state task))))
 
-(defn find-unscheduled-with-deps-satisfied
-  ([task-map task-state]
-   (find-unscheduled-with-deps-satisfied task-map task-state (keys task-state)))
-  ([task-map task-state candidates]
-   (let [dereffed-state (into {}
-                          (for [[task-name state] task-state]
-                            [task-name {::state (-> state :run-state deref :state)}]))
-         task-map-with-state (merge-with merge task-map dereffed-state)]
-     (->> candidates
-          (map task-map-with-state)
-          (filter (partial can-transition-to-ready? task-map-with-state))
-          (sort-by (comp - count :dependents))))))
+(defn find-unscheduled-with-deps-satisfied [task-map task-state candidates]
+  (let [dereffed-state (into {}
+                             (for [[task-name state] task-state]
+                               [task-name {::state (-> state :run-state deref :state)}]))
+        task-map-with-state (merge-with merge task-map dereffed-state)]
+    (->> candidates
+         (map task-map-with-state)
+         (filter (partial can-transition-to-ready? task-map-with-state))
+         (sort-by (comp - count :dependents)))))
 
 (def n-cores
   (.availableProcessors (Runtime/getRuntime)))
@@ -184,10 +181,11 @@
       :when-let [{:daguerreo.task/keys [name] :as event} (a/<! event-tap)]
 
       (check-state-transition event nil :task.state/completed)
-      (let [dependents (-> task-map name :dependents)
-            next-tasks (find-unscheduled-with-deps-satisfied task-map task-state dependents)]
-        (doseq [task next-tasks]
-          (set-task-state! task-state event-chan (:name task) :task.state/ready))
+      (let [dependents (-> task-map name :dependents)]
+        (when (seq dependents)
+          (let [next-tasks (find-unscheduled-with-deps-satisfied task-map task-state dependents)]
+            (doseq [task next-tasks]
+              (set-task-state! task-state event-chan (:name task) :task.state/ready))))
         (recur))
 
       :else (recur))))
@@ -368,7 +366,7 @@
   (into {}
     (for [task tasks :let [name (:name task)]]
       [name
-       (assoc task :dependents (or (graph/dependents task-graph name) #{}))])))
+       (assoc task :dependents (graph/dependents task-graph name))])))
 
 (defn run
   ([tasks]
@@ -406,7 +404,7 @@
        (doseq [[worker-fn tap] (map vector worker-fns event-taps)]
          (worker-fn tap))
 
-       (doseq [task (find-unscheduled-with-deps-satisfied task-map task-state)]
+       (doseq [task (find-unscheduled-with-deps-satisfied task-map task-state (keys task-state))]
          (set-task-state! task-state event-chan (:name task) :task.state/ready))
 
        (reify-job deps ctx-atom job-tap control-chan)))))
