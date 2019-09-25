@@ -1,4 +1,4 @@
-(defproject schmee/daguerreo "0.1.1"
+(defproject schmee/daguerreo "0.1.2"
   :description "A DAG task execution engine for Clojure"
   :url "https://github.com/schmee/daguerreo"
   :license {:name "MIT"
