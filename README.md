@@ -1,6 +1,6 @@
 # Daguerreo [![CircleCI](https://circleci.com/gh/schmee/daguerreo.svg?style=svg)](https://circleci.com/gh/schmee/daguerreo) [![cljdoc badge](https://cljdoc.org/badge/schmee/daguerreo)](https://cljdoc.org/d/schmee/daguerreo/CURRENT)
 
-Daguerreo is a library to create workflows using tasks. It takes care of dependency resolution, parallellism, retries and timeouts and let's you focus on your business logic. It shares the basic structure of other task execution libraries such as [Airflow](https://airflow.apache.org/) or [Luigi](https://github.com/spotify/luigi), but unlike those it is meant to be embedded in your application rather than run as a standalone service.
+Daguerreo is a library to create workflows using tasks. It takes care of dependency resolution, parallelism, retries and timeouts and let's you focus on your business logic. It shares the basic structure of other task execution libraries such as [Airflow](https://airflow.apache.org/) or [Luigi](https://github.com/spotify/luigi), but unlike those it is meant to be embedded in your application rather than run as a standalone service.
 
 ## Installation
 
@@ -98,9 +98,9 @@ JOB > running -> completed
  :smoothie "sugar + etnurmogbnmaaawtknonc-iaalco"
 ```
 
-As we can see, the first two tasks can be done in parallell, while the last two tasks are run sequentially, just as we would expect from looking at the task graph!
+As we can see, the first two tasks can be done in parallel, while the last two tasks are run sequentially, just as we would expect from looking at the task graph!
 
-Now, most of you are probably not making smoothies. Instead, imagine some complicated business logic that involves fetching data from multiple APIs, combining and transforming the recieved data, and then writing the result to a queue and a database:
+Now, most of you are probably not making smoothies. Instead, imagine some complicated business logic that involves fetching data from multiple APIs, combining and transforming the received data, and then writing the result to a queue and a database:
 
 ![Example 2](/images/example2.png)
 
@@ -114,7 +114,7 @@ The `run` function takes a collection of tasks to be performed and returns a **j
 
 The way to communicate results between tasks in Daguerreo is the **job context**. The job context is a map that contains the result of all the tasks that have been completed so far (and any initial value passed to `run`). The `:fn` function in a task takes the context as the first argument and must return a map which will be merged into the context that is passed in to the next tasks. specifying dependencies, you can ensure that all the data needed for a task is ready and contained in the context before the task is scheduled to run.
 
- Behind the scenes, Duagerreo creates a [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) that models the flow of information between tasks. Tasks are scheduled so that independent tasks are run in parallell whenever possible, and if a tasks throws an exception it will be automatically re-scheduled and tried again. The maximum number of running task and the maximum number of retries are both configurable per task and job.
+ Behind the scenes, Duagerreo creates a [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) that models the flow of information between tasks. Tasks are scheduled so that independent tasks are run in parallel whenever possible, and if a tasks throws an exception it will be automatically re-scheduled and tried again. The maximum number of running task and the maximum number of retries are both configurable per task and job.
 
 ## Early termination: cancellation and timeouts
 
@@ -130,13 +130,13 @@ It is possible to specify a timeout both per-task and for the whole job:
 (def job (daguerreo.core/run tasks {:timeout 10000})) ;; the maximum runtime of the whole job
 ```
 
-When a task times out, it will be re-scheduled and eligible to be run again, subject to the `:max-retries` paramter.
+When a task times out, it will be re-scheduled and eligible to be run again, subject to the `:max-retries` parameter.
 
 It is also possible to manually cancel a job with `daguerreo.core/cancel`.
 
 ### Making tasks handle early termination
 
-Since it is not possbile in general to forcibly preempt a running thread on the JVM, cancelltion in Daguerreo is *cooperative*, similar to other task schedulers such as [Kotlin coroutines](https://kotlinlang.org/docs/reference/coroutines/cancellation-and-timeouts.html) or [Python's Trio](https://trio.readthedocs.io/en/latest/reference-core.html#cancellation-and-timeouts). In most cases this doesn't require you to do anything, but in some cases you will need to give Daguerreo some help.
+Since it is not possible in general to forcibly preempt a running thread on the JVM, cancellation in Daguerreo is *cooperative*, similar to other task schedulers such as [Kotlin coroutines](https://kotlinlang.org/docs/reference/coroutines/cancellation-and-timeouts.html) or [Python's Trio](https://trio.readthedocs.io/en/latest/reference-core.html#cancellation-and-timeouts). In most cases this doesn't require you to do anything, but in some cases you will need to give Daguerreo some help.
 
 - **Blocking IO**: since Daguerreo cannot preempt a blocked thread, make sure you set the appropriate timeouts when you are doing blocking IO (such as network requests).
 
