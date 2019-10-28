@@ -326,8 +326,6 @@
 (defprotocol Inspectable
   (inspect [this]))
 
-(defrecord Dependencies [task-state task-map task-graph ctx event-chan create-event-tap opts])
-
 (defn reify-job [deps ctx event-tap control-chan]
   (let [result (promise)]
     (go-loop-bcond []
