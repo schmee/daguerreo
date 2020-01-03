@@ -62,12 +62,12 @@ Let's model this with Daguerreo:
 (def job (daguerreo.core/run tasks {:ctx ctx :timeout 3000}))
 
 dev=> @job
-{:daguerreo.job/state :job.state/completed}
+{:daguerreo.job/state :job.state/completed
  :diced-banana "ananba"
  :diced-mango "mgona"
  :fruit #{"banana" "mango"}
  :liquids #{"coconut-milk" "water"}
- :smoothie "sugar + cotiaanmkuooatmecnbnagna-lwr"
+ :smoothie "sugar + cotiaanmkuooatmecnbnagna-lwr"}
 ```
 
 A task function must return a map, which will be merged into the job context. Each task function receives the context which contains the initial context (specified in `run`) and the return values of all its dependencies. When the job is completed, the entire context is returned, and it contains the `:smoothie` as promised!
@@ -90,12 +90,12 @@ JOB > idle -> running
 :garnish > ready -> running
 :garnish > running -> completed
 JOB > running -> completed
-{:daguerreo.job/state :job.state/completed}
+{:daguerreo.job/state :job.state/completed
  :diced-banana "banaan"
  :diced-mango "agomn"
  :fruit #{"banana" "mango"}
  :liquids #{"coconut-milk" "water"}
- :smoothie "sugar + etnurmogbnmaaawtknonc-iaalco"
+ :smoothie "sugar + etnurmogbnmaaawtknonc-iaalco"}
 ```
 
 As we can see, the first two tasks can be done in parallel, while the last two tasks are run sequentially, just as we would expect from looking at the task graph!
@@ -125,7 +125,7 @@ It is possible to specify a timeout both per-task and for the whole job:
   [{:name :some-task
     :timeout 5000 ;; the maximum time this task is allowed to run
     :max-retries 3 ;; the number of times the job will be retried before failing the task
-    :fn some-fn}}])
+    :fn some-fn}])
 
 (def job (daguerreo.core/run tasks {:timeout 10000})) ;; the maximum runtime of the whole job
 ```
@@ -157,7 +157,7 @@ Since it is not possible in general to forcibly preempt a running thread on the 
     (loop []
       (when (is-active?) ;; am I still supposed to run?
         (Thread/sleep 1000)
-        (recur)))
+        (recur))))
   ```
 
 This is where the second argument to the task function comes into play. `is-active?` is a function that returns a boolean indicating whether the task is supposed to be running. If you have long-running tasks that you want to cancel or timeout, make sure to call `is-active?` intermittently.
@@ -195,6 +195,6 @@ For more details on what an event can contain, check out [the specs.](https://gi
 
 ## License
 
-Copyright © 2019 John Schmidt
+Copyright © 2019-2020 John Schmidt
 
 Released under the MIT License: http://www.opensource.org/licenses/mit-license.php
